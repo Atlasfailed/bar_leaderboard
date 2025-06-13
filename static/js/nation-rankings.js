@@ -97,12 +97,15 @@ class NationRankings {
             row.dataset.countryCode = nation.countryCode;
 
             const { scoreClass, scoreSign } = Utils.formatScore(nation.total_score);
+            
+            // Get current game mode for the View Details button
+            const currentGameMode = this.gameModeSelector.querySelector('button.active').dataset.mode;
 
             row.innerHTML = `
                 <td class="rank">${nation.rank}</td>
                 <td>
                     ${nation.country_name || nation.countryCode}
-                    <button class="view-details-btn" onclick="window.nationRankings.showScoreBreakdown('${nation.countryCode}', '${this.gameModeSelector.querySelector('button.active').dataset.mode}')">
+                    <button class="view-details-btn" onclick="window.nationRankings.showScoreBreakdown('${nation.countryCode}', '${currentGameMode}')">
                         View Details
                     </button>
                 </td>
