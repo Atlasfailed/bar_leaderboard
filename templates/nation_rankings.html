@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAR Nation Rankings (Last 7 Days)</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                BAR Leaderboards
+            </a>
+            <button class="nav-toggle">☰</button>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Player Rankings</a></li>
+                <li><a href="/nation-rankings" class="nav-link">Nation Rankings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>BAR Nation Rankings</h1>
+        <div class="header-status">Based on ranked wins vs. losses in the last 7 days</div>
+        <div class="last-updated" id="lastUpdated">Last updated: Loading...</div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Game Mode</label>
+                <div class="game-mode-selector">
+                    <button class="active" data-mode="Large Team">Large Team</button>
+                    <button data-mode="Small Team">Small Team</button>
+                    <button data-mode="Duel">Duel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls" style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+            <div class="control-group">
+                <label for="playerSearchInput">Find a Player</label>
+                <input type="search" id="playerSearchInput" placeholder="Search for a player across all nations...">
+            </div>
+        </div>
+
+        <div id="searchResults"></div>
+        
+        <h2 id="rankingTitle">Nation Rankings</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:10%; text-align: center;">Rank</th>
+                    <th style="width:50%;">Nation</th>
+                    <th style="width:40%;">Weekly Score</th>
+                </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+        </table>
+
+        <div class="info-box">
+            <div class="info-header">
+                <h3>Scoring System</h3>
+                <p><strong>Formula:</strong> (Wins - Losses) / (Total Games + Confidence Factor) × 10000</p>
+                <p><strong>Confidence Factor:</strong> Gives more weight to nations with a higher number of games, preventing scores from fluctuating wildly due to a small number of matches</p>
+            </div>
+            
+            <div class="info-toggle">
+                <button class="toggle-explanation" onclick="toggleExplanation()">
+                    <span class="toggle-icon">▶</span>
+                    <span class="toggle-text">Show detailed explanation</span>
+                </button>
+            </div>
+            
+            <div class="detailed-explanation" id="detailedExplanation" style="display: none;">
+                <div class="explanation-section">
+                    <h4>How the Confidence Factor Works</h4>
+                    <p>The Confidence Factor (CF) is calculated for each game mode based on average activity:</p>
+                    <div class="formula-box">
+                        <strong>k = Average Games per Nation ÷ 2</strong><br>
+                        <strong>Confidence Factor = 2k</strong>
+                    </div>
+                    <p><strong>Why this works:</strong></p>
+                    <ul>
+                        <li><strong>Small samples:</strong> CF has big impact → scores closer to 0</li>
+                        <li><strong>Large samples:</strong> CF has small impact → scores reflect true performance</li>
+                    </ul>
+                </div>
+                
+                <div class="explanation-section">
+                    <h4>Example Calculation</h4>
+                    <p>Nation with 10 wins, 5 losses, 15 total games. CF = 30:</p>
+                    <div class="calculation-example">
+                        <strong>Without CF:</strong> (10-5)/15 × 10000 = <span class="score-highlight">3333</span><br>
+                        <strong>With CF:</strong> (10-5)/(15+30) × 10000 = <span class="score-highlight">1111</span>
+                    </div>
+                    <p>The CF moderates the score, making it more reliable and fair.</p>
+                </div>
+                
+                <div class="explanation-section">
+                    <h4>Minimum Activity Filter</h4>
+                    <p>Nations must play at least <strong>k/4 games</strong> to appear on the leaderboard. This filters out "one-hit wonders" while keeping the system inclusive.</p>
+                </div>
+            </div>
+            
+            <div class="info-footer">
+                <p><em>Click on any nation to see top contributors. Click "View Details" for complete breakdown.</em></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/nation-rankings.js"></script>
+</body>
+</html>

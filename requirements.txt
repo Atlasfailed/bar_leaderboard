@@ -1,0 +1,6 @@
+flask
+Flask-Cors
+pandas
+numpy
+pyarrow
+requests

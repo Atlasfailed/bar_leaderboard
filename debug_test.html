@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPIs() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test status
+                const statusResponse = await fetch('/api/status');
+                const statusData = await statusResponse.json();
+                results.innerHTML += `<p><strong>Status:</strong> ${JSON.stringify(statusData)}</p>`;
+                
+                // Test leaderboards
+                const leaderboardsResponse = await fetch('/api/leaderboards');
+                const leaderboardsData = await leaderboardsResponse.json();
+                results.innerHTML += `<p><strong>Leaderboards count:</strong> Nations: ${leaderboardsData.nations?.length}, Regions: ${leaderboardsData.regions?.length}</p>`;
+                
+                // Test global leaderboard
+                const globalResponse = await fetch('/api/leaderboard/global/Large%20Team');
+                const globalData = await globalResponse.json();
+                results.innerHTML += `<p><strong>Global Large Team:</strong> ${globalData.total_players} players</p>`;
+                
+                results.innerHTML += '<p style="color: green;"><strong>All APIs working!</strong></p>';
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;"><strong>Error:</strong> ${error.message}</p>`;
+            }
+        }
+        
+        testAPIs();
+    </script>
+</body>
+</html>
