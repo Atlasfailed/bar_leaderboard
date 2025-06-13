@@ -4,35 +4,35 @@ A comprehensive web application for displaying Beyond All Reason (BAR) player an
 
 ![BAR Leaderboard](static/images/logo.png)
 
-## 🌟 Features
+## Features
 
-### 🏆 **Player Leaderboard**
+### **Player Leaderboard**
 - Global and country-specific rankings
 - Multiple game types (Duel, Small Team, Large Team, etc.)
 - Real-time search functionality
 - Performance ratings with 2-decimal precision
 - Fast API responses with data preprocessing
 
-### 🌍 **Nation Rankings** 
+### **Nation Rankings** 
 - Confidence Factor algorithm for fair nation scoring
 - Dynamic K-factor based on games played
 - Minimum games threshold filtering
 - Detailed explanations with collapsible info sections
 - Top player contributions per nation
 
-### ⚡ **Performance Optimized**
+### **Performance Optimized**
 - Pre-processed data for sub-100ms API responses
 - Hardware-accelerated CSS rendering
 - Document fragment optimization for large tables
 - Caching system for instant leaderboard access
 
-### 🔄 **Data Pipeline**
+### **Data Pipeline**
 - Automated BAR replay data processing
 - Scheduled updates (Tuesdays & Saturdays at 10:00 AM)
 - Nationality mapping and player tracking
 - Comprehensive error handling and logging
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Local Development
 
@@ -66,7 +66,7 @@ A comprehensive web application for displaying Beyond All Reason (BAR) player an
 
 See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE.md)
 
-## 📊 API Endpoints
+## API Endpoints
 
 ### Status & Meta
 - `GET /api/status` - System status and last update time
@@ -79,7 +79,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 ### Nation Rankings
 - `GET /api/nation-rankings/<game_type>` - Nation rankings with confidence scores
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend (Flask)
 - **`app.py`** - Main Flask application with optimized API endpoints
@@ -96,7 +96,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 - **Dynamic K-Factor** - Adaptive scoring based on experience
 - **Vectorized Operations** - High-performance pandas processing
 
-## 🎮 Game Types Supported
+## Game Types Supported
 
 - **Duel** - 1v1 matches
 - **Small Team** - 2v2, 3v3 matches  
@@ -104,14 +104,14 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 - **Battle Royale** - Free-for-all matches
 - **And more** - Automatically detected from replay data
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 - **API Response Times**: 7-90ms (vs. 2000ms+ before optimization)
 - **Data Processing**: 204 leaderboard combinations pre-cached
 - **Memory Usage**: Optimized with document fragments and GPU acceleration
 - **Update Schedule**: Bi-weekly (Tuesdays & Saturdays at 10:00 AM UTC)
 
-## 🛠️ Technical Stack
+## Technical Stack
 
 - **Backend**: Python, Flask, Pandas, Flask-CORS
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
@@ -119,14 +119,14 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 - **Data**: Parquet files, CSV mappings
 - **Performance**: Document fragments, CSS transforms, data preprocessing
 
-## 📝 Data Sources
+## Data Sources
 
 - BAR replay files (JSON format)
 - ISO country code mappings
 - Player nationality database
 - Match history and ratings
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
@@ -139,7 +139,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🎯 Future Enhancements
+## Future Enhancements
 
 - [ ] Real-time WebSocket updates
 - [ ] Player profile pages with detailed statistics
@@ -149,7 +149,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - [ ] Export functionality (CSV, JSON)
 - [ ] Multi-language support
 
-## 🐛 Issues & Support
+## Issues & Support
 
 If you encounter any issues or have suggestions:
 
@@ -157,7 +157,7 @@ If you encounter any issues or have suggestions:
 2. Create a new issue with detailed description
 3. Include error logs and system information
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Beyond All Reason community for game data
 - Contributors and testers
@@ -165,6 +165,6 @@ If you encounter any issues or have suggestions:
 
 ---
 
-**Built with ❤️ for the BAR community**
+**Built with care for the BAR community**
 
 *Last updated: June 2025*
