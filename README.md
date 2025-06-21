@@ -20,6 +20,14 @@ A comprehensive web application for displaying Beyond All Reason (BAR) player an
 - Detailed explanations with collapsible info sections
 - Top player contributions per nation
 
+### **Energy Efficiency Analysis** 
+- Comprehensive analysis of all energy production buildings
+- Interactive Plotly graphs showing metal vs time efficiency
+- Wind/tidal speed impact visualization
+- Strategic recommendations for different map types
+- Faction-specific comparisons (ARM vs COR)
+- Map-specific strategies (Supreme Isthmus, All That Glitters)
+
 ### **Performance Optimized**
 - Pre-processed data for sub-100ms API responses
 - Hardware-accelerated CSS rendering
@@ -79,6 +87,9 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 ### Nation Rankings
 - `GET /api/nation-rankings/<game_type>` - Nation rankings with confidence scores
 
+### Energy Efficiency Analysis
+- `GET /api/efficiency-data` - Energy building efficiency data for ARM and COR factions
+
 ## Architecture
 
 ### Backend (Flask)
@@ -89,6 +100,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 ### Frontend (Vanilla JS + CSS)
 - **Player Leaderboard** - Interactive rankings with search
 - **Nation Rankings** - Confidence Factor explanations
+- **Energy Efficiency Analysis** - Interactive Plotly visualizations with strategic analysis
 - **Responsive Design** - Mobile-friendly dark theme
 
 ### Data Processing
@@ -114,7 +126,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 ## Technical Stack
 
 - **Backend**: Python, Flask, Pandas, Flask-CORS
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript, Plotly.js
 - **Deployment**: PythonAnywhere, WSGI
 - **Data**: Parquet files, CSV mappings
 - **Performance**: Document fragments, CSS transforms, data preprocessing
@@ -125,6 +137,7 @@ See detailed deployment instructions in [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE
 - ISO country code mappings
 - Player nationality database
 - Match history and ratings
+- Unit statistics and efficiency data from BAR game files
 
 ## Contributing
 

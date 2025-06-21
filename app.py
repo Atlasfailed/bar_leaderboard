@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LEADERBOARD_DATA_FILE   = os.path.join(BASE_DIR, 'data', 'final_leaderboard.parquet')
 ISO_COUNTRIES_FILE      = os.path.join(BASE_DIR, 'data', 'iso_country.csv')
 NATION_RANKINGS_FILE    = os.path.join(BASE_DIR, 'data', 'nation_rankings.parquet')
+EFFICIENCY_ANALYSIS_FILE = os.path.join(BASE_DIR, 'data', 'efficiency_vs_speed_analysis_with_names.csv')
 
 # --- This file is required for the search functionality ---
 PLAYER_CONTRIBUTIONS_FILE = os.path.join(BASE_DIR, 'data/player_contributions.parquet')
@@ -202,6 +203,10 @@ def home():
 @app.route('/nation-rankings')
 def nation_rankings_page():
     return render_template('nation_rankings.html')
+
+@app.route('/efficiency-analysis')
+def efficiency_analysis_page():
+    return render_template('efficiency_analysis.html')
 
 @app.route('/api/player-contributions/<game_type>')
 def get_player_contributions(game_type):
@@ -510,6 +515,34 @@ def get_global_leaderboard(game_type):
     else:
         return jsonify({"players": [], "total_players": 0})
 
+
+@app.route('/api/efficiency-data')
+def get_efficiency_data():
+    """Provides efficiency vs speed analysis data for plotting."""
+    efficiency_file = os.path.join(BASE_DIR, 'data', 'efficiency_vs_speed_analysis_with_names.csv')
+    
+    if not os.path.exists(efficiency_file):
+        return jsonify({"error": "Efficiency analysis data not available"}), 500
+    
+    try:
+        df = pd.read_csv(efficiency_file)
+        
+        # Convert to more intuitive units
+        df['metal_efficiency_per_100'] = df['metal_efficiency'] * 100  # Energy per 100 metal
+        df['time_efficiency_per_1000'] = df['time_efficiency'] * 1000  # Energy per 1000 build time
+        
+        # Include all energy buildings (both variable and fixed)
+        # Group by faction for separate datasets
+        arm_data = df[df['faction'] == 'ARM']
+        cor_data = df[df['faction'] == 'COR']
+        
+        return jsonify({
+            'arm_data': arm_data.to_dict('records'),
+            'cor_data': cor_data.to_dict('records')
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Error loading efficiency data: {str(e)}"}), 500
 
 # --- Main Execution ---
 if __name__ == '__main__':
