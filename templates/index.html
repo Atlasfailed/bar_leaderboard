@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global and National BAR Leaderboards</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-    <!-- Navigation Menu -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">
-                <img src="/static/images/logo.png" alt="AtlasFailed Logo" class="nav-logo">
-                BAR Leaderboards
-            </a>
-            <button class="nav-toggle">☰</button>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Player Rankings</a></li>
-                <li><a href="/nation-rankings" class="nav-link">Nation Rankings</a></li>
-            </ul>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
+{% block title %}Global and National BAR Leaderboards{% endblock %}
+
+{% block content %}
         <h1>Global and National BAR Leaderboards</h1>
         <div class="header-status">Discover the elite Beyond All Reason champions! Our comprehensive player rankings showcase individual mastery across all game modes and nations. Whether you're hunting for the world's best duelist or tracking your country's top performers, find your place among the legends. Every match matters, every victory counts. Rise through the ranks and claim your spot in BAR history!</div>
         <div class="last-updated" id="status-header">Loading status...</div>
@@ -62,12 +42,8 @@
             </thead>
             <tbody id="leaderboardBody"></tbody>
         </table>
+{% endblock %}
 
-        <img src="/static/images/logo.png" alt="AtlasFailed Logo" class="footer-logo">
-    </div>
-
-    <!-- Scripts -->
-    <script src="/static/js/common.js"></script>
+{% block scripts %}
     <script src="/static/js/player-leaderboard.js"></script>
-</body>
-</html>
+{% endblock %}

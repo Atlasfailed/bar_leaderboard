@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAR Nation Rankings (Last 7 Days)</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-    <!-- Navigation Menu -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">
-                <img src="/static/images/logo.png" alt="AtlasFailed Logo" class="nav-logo">
-                BAR Leaderboards
-            </a>
-            <button class="nav-toggle">☰</button>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">Player Rankings</a></li>
-                <li><a href="/nation-rankings" class="nav-link">Nation Rankings</a></li>
-            </ul>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
+{% block title %}BAR Nation Rankings (Last 7 Days){% endblock %}
+
+{% block content %}
         <h1>BAR Nation Rankings</h1>
         <div class="header-status">Who reigns supreme in Beyond All Reason? Our new Nation Rankings reveal the global power balance, updated weekly based on the performance of each country's elite players. See where your nation ranks in the global BAR championship and, more importantly, how your performance is shaping its destiny. Fight for your flag!</div>
         <div class="last-updated" id="lastUpdated">Last updated: Loading...</div>
@@ -139,12 +119,8 @@
                 <p><em><strong>Pro Tip:</strong> Click on any nation to see their top contributors and discover the players driving their success! Use "View Details" to dive deep into the statistical breakdown.</em></p>
             </div>
         </div>
+{% endblock %}
 
-        <img src="/static/images/logo.png" alt="AtlasFailed Logo" class="footer-logo">
-    </div>
-
-    <!-- Scripts -->
-    <script src="/static/js/common.js"></script>
+{% block scripts %}
     <script src="/static/js/nation-rankings.js"></script>
-</body>
-</html>
+{% endblock %}

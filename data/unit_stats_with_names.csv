@@ -1,0 +1,63 @@
+filename,unit_name,display_name,description,buildtime,energycost,energymake,energystorage,metalcost,objectname,total_cost,is_variable_energy,energymake_min,energymake_max,metal_efficiency_min,metal_efficiency_max,time_efficiency_min,time_efficiency_max
+armassistdrone.lua,armassistdrone,Assist Drone,Portable Buildpower,500,1.0,,,1.0,Units/scavboss/ARMASSISTDRONE.s3o,1.01,No,0.0,0.0,,,,
+corassistdrone.lua,corassistdrone,Assist Drone,Portable Buildpower,500,1.0,,,1.0,Units/scavboss/CORASSISTDRONE.s3o,1.01,No,0.0,0.0,,,,
+legassistdrone.lua,legassistdrone,Assist Drone,Portable Buildpower,500,1.0,,,1.0,Units/scavboss/CORASSISTDRONE.s3o,1.01,No,0.0,0.0,,,,
+corassistdrone_land.lua,corassistdrone_land,Assist Vehicle,Portable Buildpower,500,1.0,,,1.0,Units/corassistdrone_land.s3o,1.01,No,0.0,0.0,,,,
+legassistdrone_land.lua,legassistdrone_land,Assist Vehicle,Portable Buildpower,500,1.0,,,1.0,Units/corassistdrone_land.s3o,1.01,No,0.0,0.0,,,,
+armcom.lua,armcom,Armada Commander,Commander,75000,26000.0,25,500.0,2700.0,"Units/ARMCOM""..(Spring.GetModOptions().xmas and '-XMAS' or '').."".s3o",3071.43,No,25.0,25.0,0.0081,0.0081,0.000333,0.000333
+armcomnew.lua,armcomnew,,,75000,26000.0,25,500.0,2700.0,"Units/ARMCOM""..(Spring.GetModOptions().xmas and '-XMAS' or '').."".s3o",3071.43,No,25.0,25.0,0.0081,0.0081,0.000333,0.000333
+armcomcon.lua,armcomcon,,,75000,26000.0,25,500.0,2700.0,Units/ARMCOM.s3o,3071.43,No,25.0,25.0,0.0081,0.0081,0.000333,0.000333
+armassistdrone_land.lua,armassistdrone_land,Assist Vehicle,Portable Buildpower,500,1.0,,,1.0,Units/armassistdrone_land.s3o,1.01,No,0.0,0.0,,,,
+corcomcon.lua,corcomcon,,,75000,26000.0,25,500.0,2700.0,Units/CORCOM.s3o,3071.43,No,25.0,25.0,0.0081,0.0081,0.000333,0.000333
+corcom.lua,corcom,Cortex Commander,Commander,75000,26000.0,25,500.0,2700.0,"Units/CORCOM""..(Spring.GetModOptions().xmas and '-XMAS' or '').."".s3o",3071.43,No,25.0,25.0,0.0081,0.0081,0.000333,0.000333
+ArmBuildings/LandEconomy/armmex.lua,armmex,Metal Extractor,Extracts Metal from Metalspots,1800,500.0,,,50.0,Units/ARMMEX.s3o,57.14,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armmakr.lua,armmakr,Energy Converter,Converts 70 energy into 1 metal per sec,2600,1150.0,,,1.0,Units/ARMMAKR.s3o,17.43,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armafus.lua,armafus,Advanced Fusion Reactor,Produces 3000 Energy (Hazardous),312500,69000.0,3000,9000.0,9700.0,Units/ARMAFUS.s3o,10685.71,No,3000.0,3000.0,0.2807,0.2807,0.0096,0.0096
+ArmBuildings/LandEconomy/armageo.lua,armageo,Advanced Geothermal Powerplant,Produces 1250 Energy (Hazardous),33300,27000.0,1250,12000.0,1600.0,Units/ARMAGEO.s3o,1985.71,No,1250.0,1250.0,0.6295,0.6295,0.037538,0.037538
+ArmBuildings/LandEconomy/armadvsol.lua,armadvsol,Advanced Solar Collector,Produces 75 Energy,7950,5000.0,75,100.0,350.0,Units/ARMADVSOL.s3o,421.43,No,75.0,75.0,0.178,0.178,0.009434,0.009434
+ArmBuildings/LandEconomy/armmstor.lua,armmstor,Metal Storage,Increases Metal Storage (3000),2920,570.0,,,330.0,Units/ARMMSTOR.s3o,338.14,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armgmm.lua,armgmm,Prude,"Safe Geothermal Powerplant, produces 750 Energy",41500,25000.0,750,1500.0,1150.0,Units/ARMGMM.s3o,1507.14,No,750.0,750.0,0.4976,0.4976,0.018072,0.018072
+ArmBuildings/LandEconomy/armwin.lua,armwin,Wind Turbine,Produces Energy. Depends on wind strength.,1600,175.0,1-30 (variable),0.5,40.0,Units/ARMWIN.s3o,42.5,Yes,1.0,30.0,0.0235,0.7059,0.000625,0.01875
+ArmBuildings/LandEconomy/armestor.lua,armestor,Energy Storage,Increases Energy Storage (6000),4110,1700.0,,6000.0,170.0,Units/ARMESTOR.s3o,194.29,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armckfus.lua,armckfus,Cloakable Fusion Reactor,Produces 1050 Energy,84400,26000.0,1050,2500.0,4700.0,Units/ARMCKFUS.s3o,5071.43,No,1050.0,1050.0,0.207,0.207,0.012441,0.012441
+ArmBuildings/LandEconomy/armgeo.lua,armgeo,Geothermal Powerplant,Produces 300 Energy,13100,13000.0,300,1000.0,560.0,Units/ARMGEO.s3o,745.71,No,300.0,300.0,0.4023,0.4023,0.022901,0.022901
+ArmBuildings/LandEconomy/armsolar.lua,armsolar,Solar Collector,Produces 20 Energy,2600,0.0,20,50.0,155.0,Units/ARMSOLAR.s3o,155.0,No,20.0,20.0,0.129,0.129,0.007692,0.007692
+ArmBuildings/LandEconomy/armmoho.lua,armmoho,Advanced Metal Extractor,Advanced Metal Extractor / Storage,14900,7700.0,,,620.0,Units/ARMMOHO.s3o,730.0,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armamex.lua,armamex,Twilight,Stealthy Cloakable Metal Extractor,1800,1500.0,,,200.0,Units/ARMAMEX.s3o,221.43,No,0.0,0.0,,,,
+ArmBuildings/LandEconomy/armfus.lua,armfus,Fusion Reactor,Produces 1000 Energy,70000,21000.0,1000,2500.0,4300.0,Units/ARMFUS.s3o,4600.0,No,1000.0,1000.0,0.2174,0.2174,0.014286,0.014286
+ArmBuildings/LandEconomy/armmmkr.lua,armmmkr,Advanced Energy Converter,Converts 600 energy into 10.3 metal per sec,35000,21000.0,,,380.0,Units/ARMMMKR.s3o,680.0,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armfmkr.lua,armfmkr,Naval Energy Converter,Converts 70 energy into 1 metal per sec,2600,1150.0,,,1.0,Units/ARMFMKR.s3o,17.43,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwmme.lua,armuwmme,Naval Advanced Metal Extractor,Advanced Metal Extractor / Storage,14900,7700.0,,,620.0,Units/ARMUWMME.s3o,730.0,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwes.lua,armuwes,Naval Energy Storage,Increases Energy Storage (6000),4110,1700.0,,6000.0,170.0,Units/ARMUWES.s3o,194.29,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwadvms.lua,armuwadvms,Hardened Metal Storage,Increases Metal Storage (10000),20400,11500.0,,,750.0,Units/ARMUWADVMS.s3o,914.29,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwageo.lua,armuwageo,Advanced Geothermal Powerplant,Produces 1250 Energy (Hazardous),33300,,1250,12000.0,,Units/ARMUWAGEO.s3o,,No,1250.0,1250.0,,,0.037538,0.037538
+ArmBuildings/SeaEconomy/armuwfus.lua,armuwfus,Naval Fusion Reactor,Produces 1200 Energy,99900,33500.0,1200,2500.0,5200.0,Units/ARMUWFUS.s3o,5678.57,No,1200.0,1200.0,0.2113,0.2113,0.012012,0.012012
+ArmBuildings/SeaEconomy/armtide.lua,armtide,Tidal Generator,Produces Energy (depends on map),2190,200.0,1-30 (variable),50.0,90.0,Units/ARMTIDE.s3o,92.86,Yes,1.0,30.0,0.0108,0.3231,0.000457,0.013699
+ArmBuildings/SeaEconomy/armuwgeo.lua,armuwgeo,Offshore Geothermal Powerplant,Produces 300 Energy,13100,,300,1000.0,,Units/ARMUWGEO.s3o,,No,300.0,300.0,,,0.022901,0.022901
+ArmBuildings/SeaEconomy/armuwmmm.lua,armuwmmm,Naval Advanced Energy Converter,Converts 600 energy into 10.3 metal per sec,35000,21000.0,,,380.0,Units/ARMUWMMM.s3o,680.0,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwms.lua,armuwms,Naval Metal Storage,Increases Metal Storage (3000),2920,570.0,,,330.0,Units/ARMUWMS.s3o,338.14,No,0.0,0.0,,,,
+ArmBuildings/SeaEconomy/armuwadves.lua,armuwadves,Hardened Energy Storage,Increases Energy Storage (40000),20300,10000.0,,40000.0,830.0,Units/ARMUWADVES.s3o,972.86,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/corwin.lua,corwin,Wind Turbine,Produces Energy. Depends on wind strength.,1680,175.0,1-30 (variable),0.5,43.0,Units/CORWIN.s3o,45.5,Yes,1.0,30.0,0.022,0.6593,0.000595,0.017857
+CorBuildings/LandEconomy/coradvsol.lua,coradvsol,Advanced Solar Collector,Produces 75 Energy,8150,4000.0,75,100.0,370.0,Units/CORADVSOL.s3o,427.14,No,75.0,75.0,0.1756,0.1756,0.009202,0.009202
+CorBuildings/LandEconomy/corsolar.lua,corsolar,Solar Collector,Produces 20 Energy,2800,0.0,20,50.0,150.0,Units/CORSOLAR.s3o,150.0,No,20.0,20.0,0.1333,0.1333,0.007143,0.007143
+CorBuildings/LandEconomy/cormex.lua,cormex,Metal Extractor,Extracts Metal from Metalspots,1870,500.0,,,50.0,Units/CORMEX.s3o,57.14,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/cormakr.lua,cormakr,Energy Converter,Converts 70 energy into 1 metal per sec,2680,1250.0,,,1.0,Units/CORMAKR.s3o,18.86,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/corafus.lua,corafus,Advanced Fusion Reactor,Produces 3000 Energy (Hazardous),329200,48000.0,3000,9000.0,9700.0,Units/CORAFUS.s3o,10385.71,No,3000.0,3000.0,0.2889,0.2889,0.009113,0.009113
+CorBuildings/LandEconomy/corageo.lua,corageo,Advanced Geothermal Powerplant,Produces 1250 Energy (Hazardous),32000,27000.0,1250,12000.0,1500.0,Units/CORAGEO.s3o,1885.71,No,1250.0,1250.0,0.6629,0.6629,0.039062,0.039062
+CorBuildings/LandEconomy/corgeo.lua,corgeo,Geothermal Powerplant,Produces 300 Energy,12900,13000.0,300,1000.0,540.0,Units/CORGEO.s3o,725.71,No,300.0,300.0,0.4134,0.4134,0.023256,0.023256
+CorBuildings/LandEconomy/cormoho.lua,cormoho,Advanced Metal Extractor,Advanced Metal Extractor / Storage,14100,8100.0,,,640.0,Units/CORMOHO.s3o,755.71,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/cormmkr.lua,cormmkr,Advanced Energy Converter,Converts 600 energy into 10.3 metal per sec,31300,21000.0,,,370.0,Units/CORMMKR.s3o,670.0,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/corfus.lua,corfus,Fusion Reactor,Produces 1100 Energy,75400,26000.0,1100,2500.0,4500.0,Units/CORFUS.s3o,4871.43,No,1100.0,1100.0,0.2258,0.2258,0.014589,0.014589
+CorBuildings/LandEconomy/cormstor.lua,cormstor,Metal Storage,Increases Metal Storage (3000),2920,590.0,,,340.0,Units/CORMSTOR.s3o,348.43,No,0.0,0.0,,,,
+CorBuildings/LandEconomy/corestor.lua,corestor,Energy Storage,Increases Energy Storage (6000),4260,1800.0,,6000.0,175.0,Units/CORESTOR.s3o,200.71,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwfus.lua,coruwfus,Naval Fusion Reactor,Produces 1220 Energy,105000,34000.0,1220,2500.0,5400.0,Units/CORUWFUS.s3o,5885.71,No,1220.0,1220.0,0.2073,0.2073,0.011619,0.011619
+CorBuildings/SeaEconomy/coruwes.lua,coruwes,Naval Energy Storage,Increases Energy Storage (6000),4260,1800.0,,6000.0,175.0,Units/CORUWES.s3o,200.71,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwgeo.lua,coruwgeo,Offshore Geothermal Powerplant,Produces 300 Energy,12900,,300,1000.0,,Units/CORUWGEO.s3o,,No,300.0,300.0,,,0.023256,0.023256
+CorBuildings/SeaEconomy/coruwmmm.lua,coruwmmm,Naval Advanced Energy Converter,Converts 600 energy into 10.3 metal per sec,31300,21000.0,,,370.0,Units/CORUWMMM.s3o,670.0,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/corfmkr.lua,corfmkr,Naval Energy Converter,Converts 70 energy into 1 metal per sec,2680,1250.0,,,1.0,Units/CORFMKR.s3o,18.86,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwadves.lua,coruwadves,Hardened Energy Storage,Increases Energy Storage (40000),20400,11000.0,,40000.0,840.0,Units/CORUWADVES.s3o,997.14,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwmme.lua,coruwmme,Naval Advanced Metal Extractor,Advanced Metal Extractor / Storage,14100,8100.0,,,640.0,Units/CORUWMME.s3o,755.71,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwms.lua,coruwms,Naval Metal Storage,Increases Metal Storage (3000),2920,590.0,,,340.0,Units/CORUWMS.s3o,348.43,No,0.0,0.0,,,,
+CorBuildings/SeaEconomy/coruwageo.lua,coruwageo,Advanced Geothermal Powerplant,Produces 1250 Energy (Hazardous),32000,,1250,12000.0,,Units/CORUWAGEO.s3o,,No,1250.0,1250.0,,,0.039062,0.039062
+CorBuildings/SeaEconomy/cortide.lua,cortide,Tidal Generator,Produces Energy (depends on map),2100,250.0,1-30 (variable),50.0,85.0,Units/CORTIDE.s3o,88.57,Yes,1.0,30.0,0.0113,0.3387,0.000476,0.014286
+CorBuildings/SeaEconomy/coruwadvms.lua,coruwadvms,Hardened Metal Storage,Increases Metal Storage (10000),20500,11000.0,,,760.0,Units/CORUWADVMS.s3o,917.14,No,0.0,0.0,,,,
