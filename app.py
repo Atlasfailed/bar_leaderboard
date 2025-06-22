@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timedelta
 import numpy as np 
 import math
+import json
 
 # --- Configuration ---
 app = Flask(__name__)
@@ -22,6 +23,8 @@ LEADERBOARD_DATA_FILE   = os.path.join(BASE_DIR, 'data', 'final_leaderboard.parq
 ISO_COUNTRIES_FILE      = os.path.join(BASE_DIR, 'data', 'iso_country.csv')
 NATION_RANKINGS_FILE    = os.path.join(BASE_DIR, 'data', 'nation_rankings.parquet')
 EFFICIENCY_ANALYSIS_FILE = os.path.join(BASE_DIR, 'data', 'efficiency_vs_speed_analysis_with_names.csv')
+TEAM_ANALYSIS_FILE = os.path.join(BASE_DIR, 'data', 'roster_analysis_results.json')
+
 
 # --- This file is required for the search functionality ---
 PLAYER_CONTRIBUTIONS_FILE = os.path.join(BASE_DIR, 'data/player_contributions.parquet')
@@ -207,6 +210,15 @@ def nation_rankings_page():
 @app.route('/efficiency-analysis')
 def efficiency_analysis_page():
     return render_template('efficiency_analysis.html')
+
+@app.route('/team-rankings')
+def team_rankings_page():
+    return render_template('team_rankings.html')
+
+@app.route('/network-visualization')
+def network_visualization_page():
+    return render_template('network_visualization.html')
+
 
 @app.route('/api/player-contributions/<game_type>')
 def get_player_contributions(game_type):
@@ -544,13 +556,384 @@ def get_efficiency_data():
     except Exception as e:
         return jsonify({"error": f"Error loading efficiency data: {str(e)}"}), 500
 
-# --- Main Execution ---
+@app.route('/api/team-rankings')
+def get_team_rankings():
+    """Get team rankings data."""
+    try:
+        if not os.path.exists(TEAM_ANALYSIS_FILE):
+            return jsonify({"error": "Team analysis data not available. Please run team analysis first."}), 404
+        
+        with open(TEAM_ANALYSIS_FILE, 'r') as f:
+            roster_data = json.load(f)
+        
+        # Transform the roster data to the expected frontend format
+        team_data = {
+            "analysis_date": roster_data.get("analysis_date"),
+            "config": roster_data.get("config"),
+            "summary": roster_data.get("summary"),
+            "party_teams": roster_data.get("rosters", []),
+            "network_teams": roster_data.get("communities", []),
+            "frequent_pairs": []  # Empty since we're only doing party-based analysis
+        }
+        
+        return jsonify(team_data)
+    except Exception as e:
+        return jsonify({"error": f"Error loading team data: {str(e)}"}), 500
+
+@app.route('/api/team-rankings/<team_type>')
+def get_team_rankings_by_type(team_type):
+    """Get team rankings data by type (party_teams, network_teams, frequent_teammates)."""
+    try:
+        if not os.path.exists(TEAM_ANALYSIS_FILE):
+            return jsonify({"error": "Team analysis data not available. Please run team analysis first."}), 404
+        
+        with open(TEAM_ANALYSIS_FILE, 'r') as f:
+            roster_data = json.load(f)
+        
+        # Transform the roster data to the expected frontend format
+        if team_type == 'party_teams':
+            return jsonify({team_type: roster_data.get("rosters", [])})
+        elif team_type == 'network_teams' or team_type == 'communities':
+            return jsonify({team_type: roster_data.get("communities", [])})
+        elif team_type == 'frequent_teammates' or team_type == 'frequent_pairs':
+            return jsonify({team_type: []})  # Empty since we're only doing party-based analysis
+        else:
+            return jsonify({"error": f"Team type '{team_type}' not found"}), 404
+        
+    except Exception as e:
+        return jsonify({"error": f"Error loading team data: {str(e)}"}), 500
+
+@app.route('/api/player-suggestions/<partial_name>')
+def get_player_suggestions(partial_name):
+    """Get player name suggestions for autocomplete."""
+    try:
+        if not os.path.exists(TEAM_ANALYSIS_FILE):
+            return jsonify({"error": "Team analysis data not available."}), 404
+        
+        with open(TEAM_ANALYSIS_FILE, 'r') as f:
+            roster_data = json.load(f)
+        
+        partial_name_lower = partial_name.lower()
+        suggestions = set()
+        
+        # Collect all unique player names from roster data (party teams)
+        for team in roster_data.get('rosters', []):
+            for player in team.get('roster', []):
+                name = player.get('name', '')
+                if name and partial_name_lower in name.lower():
+                    suggestions.add(name)
+        
+        # Also collect from communities data
+        for community in roster_data.get('communities', []):
+            for player in community.get('roster', []):
+                name = player.get('name', '')
+                if name and partial_name_lower in name.lower():
+                    suggestions.add(name)
+        
+        # Return sorted suggestions, limited to 10
+        sorted_suggestions = sorted(list(suggestions))[:10]
+        
+        return jsonify({
+            'suggestions': sorted_suggestions,
+            'query': partial_name
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Error getting suggestions: {str(e)}"}), 500
+
+@app.route('/api/search-teams/<player_name>')
+@app.route('/api/search-teams/<player_name>/<search_type>')
+def search_teams_by_player(player_name, search_type='party_teams'):
+    """Search for teams or communities that contain a specific player."""
+    try:
+        if not os.path.exists(TEAM_ANALYSIS_FILE):
+            return jsonify({"error": "Team analysis data not available. Please run team analysis first."}), 404
+        
+        with open(TEAM_ANALYSIS_FILE, 'r') as f:
+            roster_data = json.load(f)
+        
+        player_name_lower = player_name.lower()
+        player_items = []
+        
+        if search_type == 'network_teams' or search_type == 'communities':
+            # Search through communities
+            for community in roster_data.get('communities', []):
+                for player in community.get('roster', []):
+                    if player_name_lower in player['name'].lower():
+                        player_items.append({
+                            **community,
+                            'team_type': 'community',
+                            'search_match': player
+                        })
+                        break
+            
+            # Sort communities by size (largest first) and exact matches
+            def sort_key(item):
+                exact_match = player_name_lower == item['search_match']['name'].lower()
+                size = item.get('player_count', 0)
+                return (-int(exact_match), -size)
+                
+        else:
+            # Search through party teams (default behavior)
+            for team in roster_data.get('rosters', []):
+                for player in team.get('roster', []):
+                    if player_name_lower in player['name'].lower():
+                        # Add player_details field for frontend compatibility
+                        team_copy = team.copy()
+                        team_copy['player_details'] = team_copy.get('roster', [])
+                        player_items.append({
+                            **team_copy,
+                            'team_type': 'party',
+                            'search_match': player
+                        })
+                        break
+            
+            # Sort teams by relevance (exact matches first, then by team activity)
+            def sort_key(item):
+                exact_match = player_name_lower == item['search_match']['name'].lower()
+                activity = item.get('stats_overall', {}).get('matches', 0)
+                return (-int(exact_match), -activity)
+        
+        player_items.sort(key=sort_key)
+        
+        return jsonify({
+            'player_name': player_name,
+            'search_type': search_type,
+            'items_found': len(player_items),
+            'teams': player_items[:20]  # Limit to top 20 results
+        })
+        
+    except Exception as e:
+        return jsonify({"error": f"Error searching for player teams: {str(e)}"}), 500
+
+@app.route('/api/network-data')
+def get_network_data():
+    """Get the full network data for visualization."""
+    try:
+        # Generate network data from the existing team analysis
+        network_data = generate_network_data()
+        return jsonify(network_data)
+    except Exception as e:
+        print(f"Error generating network data: {e}")
+        return jsonify({"error": "Failed to generate network data"}), 500
+
+@app.route('/api/player-network/<player_name>')
+def get_player_network(player_name):
+    """Get network data focused on a specific player and their connections."""
+    try:
+        network_data = generate_player_network(player_name)
+        return jsonify(network_data)
+    except Exception as e:
+        print(f"Error generating player network for {player_name}: {e}")
+        return jsonify({"error": f"Failed to generate network data for player {player_name}"}), 500
+
+@app.route('/api/network-search/<query>')
+def search_network_players(query):
+    """Search for players in the network."""
+    try:
+        players = search_players_in_network(query)
+        return jsonify(players)
+    except Exception as e:
+        print(f"Error searching players: {e}")
+        return jsonify({"error": "Failed to search players"}), 500
+
+def generate_network_data():
+    """Generate network graph data from team analysis results."""
+    if not os.path.exists(TEAM_ANALYSIS_FILE):
+        raise Exception("Team analysis file not found")
+    
+    with open(TEAM_ANALYSIS_FILE, 'r') as f:
+        team_data = json.load(f)
+    
+    nodes = []
+    edges = []
+    node_ids = set()
+    
+    # Extract nodes and edges from communities (more comprehensive than just teams)
+    for community in team_data.get('communities', []):
+        community_players = community.get('roster', [])
+        community_size = len(community_players)
+        
+        # Add nodes
+        for player in community_players:
+            player_id = player['user_id']
+            if player_id not in node_ids:
+                nodes.append({
+                    'id': player_id,
+                    'name': player['name'],
+                    'country': player.get('country', 'Unknown'),
+                    'group': len(nodes) % 10,  # Color grouping
+                    'community_size': community_size,
+                    'community_id': community.get('community_id')
+                })
+                node_ids.add(player_id)
+        
+        # Add edges between players in the same community
+        for i, player1 in enumerate(community_players):
+            for player2 in community_players[i+1:]:
+                # Calculate edge weight based on community size (smaller = stronger connection)
+                weight = max(1, 50 - community_size)
+                edges.append({
+                    'source': player1['user_id'],
+                    'target': player2['user_id'],
+                    'weight': weight,
+                    'community_id': community.get('community_id')
+                })
+    
+    # Limit the network size for performance (show top 1000 most connected players)
+    if len(nodes) > 1000:
+        # Count connections per player
+        connection_counts = {}
+        for edge in edges:
+            connection_counts[edge['source']] = connection_counts.get(edge['source'], 0) + 1
+            connection_counts[edge['target']] = connection_counts.get(edge['target'], 0) + 1
+        
+        # Sort players by connection count and take top 1000
+        top_players = sorted(connection_counts.items(), key=lambda x: x[1], reverse=True)[:1000]
+        top_player_ids = {player_id for player_id, count in top_players}
+        
+        # Filter nodes and edges
+        nodes = [node for node in nodes if node['id'] in top_player_ids]
+        edges = [edge for edge in edges if edge['source'] in top_player_ids and edge['target'] in top_player_ids]
+    
+    return {
+        'nodes': nodes,
+        'edges': edges,
+        'stats': {
+            'total_nodes': len(nodes),
+            'total_edges': len(edges),
+            'communities': len(team_data.get('communities', []))
+        }
+    }
+
+def generate_player_network(player_name):
+    """Generate network data focused on a specific player."""
+    if not os.path.exists(TEAM_ANALYSIS_FILE):
+        raise Exception("Team analysis file not found")
+    
+    with open(TEAM_ANALYSIS_FILE, 'r') as f:
+        team_data = json.load(f)
+    
+    player_name_lower = player_name.lower()
+    target_player = None
+    player_communities = []
+    
+    # Find the player and their communities
+    for community in team_data.get('communities', []):
+        community_players = community.get('roster', [])
+        player_in_community = None
+        
+        for player in community_players:
+            if player['name'].lower() == player_name_lower:
+                target_player = player
+                player_in_community = player
+                break
+        
+        if player_in_community:
+            player_communities.append(community)
+    
+    if not target_player:
+        return {'nodes': [], 'edges': [], 'message': f'Player "{player_name}" not found in network'}
+    
+    nodes = []
+    edges = []
+    node_ids = set()
+    
+    # Add the target player
+    nodes.append({
+        'id': target_player['user_id'],
+        'name': target_player['name'],
+        'country': target_player.get('country', 'Unknown'),
+        'group': 0,  # Special group for target player
+        'is_target': True
+    })
+    node_ids.add(target_player['user_id'])
+    
+    # Add nodes and edges from all communities the player belongs to
+    for i, community in enumerate(player_communities):
+        community_players = community.get('roster', [])
+        group_id = i + 1
+        
+        for player in community_players:
+            player_id = player['user_id']
+            if player_id not in node_ids:
+                nodes.append({
+                    'id': player_id,
+                    'name': player['name'],
+                    'country': player.get('country', 'Unknown'),
+                    'group': group_id,
+                    'community_size': len(community_players),
+                    'community_id': community.get('community_id')
+                })
+                node_ids.add(player_id)
+            
+            # Add edge to target player
+            if player_id != target_player['user_id']:
+                edges.append({
+                    'source': target_player['user_id'],
+                    'target': player_id,
+                    'weight': 10,
+                    'community_id': community.get('community_id')
+                })
+        
+        # Add edges between other players in the same community (lighter connections)
+        for j, player1 in enumerate(community_players):
+            for player2 in community_players[j+1:]:
+                if player1['user_id'] != target_player['user_id'] and player2['user_id'] != target_player['user_id']:
+                    edges.append({
+                        'source': player1['user_id'],
+                        'target': player2['user_id'],
+                        'weight': 2,
+                        'community_id': community.get('community_id')
+                    })
+    
+    return {
+        'nodes': nodes,
+        'edges': edges,
+        'target_player': target_player,
+        'communities': len(player_communities),
+        'stats': {
+            'total_nodes': len(nodes),
+            'total_edges': len(edges),
+            'player_communities': len(player_communities)
+        }
+    }
+
+def search_players_in_network(query):
+    """Search for players in the network data."""
+    if not os.path.exists(TEAM_ANALYSIS_FILE):
+        raise Exception("Team analysis file not found")
+    
+    with open(TEAM_ANALYSIS_FILE, 'r') as f:
+        team_data = json.load(f)
+    
+    query_lower = query.lower()
+    matching_players = []
+    seen_players = set()
+    
+    # Search through all communities
+    for community in team_data.get('communities', []):
+        for player in community.get('roster', []):
+            player_id = player['user_id']
+            player_name = player['name']
+            
+            if player_id not in seen_players and query_lower in player_name.lower():
+                matching_players.append({
+                    'id': player_id,
+                    'name': player_name,
+                    'country': player.get('country', 'Unknown')
+                })
+                seen_players.add(player_id)
+                
+                # Limit results for performance
+                if len(matching_players) >= 50:
+                    break
+        
+        if len(matching_players) >= 50:
+            break
+    
+    return matching_players
+
 if __name__ == '__main__':
-    if PRODUCTION:
-        # Production mode (PythonAnywhere)
-        print("Running in production mode")
-        app.run(debug=False)
-    else:
-        # Development mode (local)
-        print("Running in development mode")
-        app.run(host='0.0.0.0', port=5010, debug=True)
+    app.run(debug=True)
+

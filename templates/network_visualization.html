@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block title %}Network Visualization - Nation Leaderboard{% endblock %}
+
+{% block head %}
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .network-container {
+            width: 100%;
+            height: 70vh;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .network-controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .search-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn-network {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .btn-network:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .network-info {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #666;
+            flex-wrap: wrap;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 200px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .node-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1001;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .network-container {
+                height: 50vh;
+            }
+            
+            .search-section {
+                flex-direction: column;
+            }
+            
+            .search-input, .btn-network {
+                width: 100%;
+            }
+            
+            .network-info {
+                justify-content: center;
+            }
+            
+            .legend {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-project-diagram"></i>
+                Player Network Visualization
+            </h1>
+            
+            <div class="network-controls">
+                <div class="search-section">
+                    <div class="search-wrapper">
+                        <input type="text" 
+                               id="playerSearch" 
+                               class="search-input" 
+                               placeholder="Search for a player to see their connections..."
+                               autocomplete="off">
+                        <div id="suggestions" class="suggestions"></div>
+                    </div>
+                    <button id="focusPlayerBtn" class="btn-network">Focus Player</button>
+                    <button id="showFullNetworkBtn" class="btn-network btn-secondary">Show Full Network</button>
+                    <button id="resetViewBtn" class="btn-network btn-secondary">Reset View</button>
+                </div>
+                
+                <div class="network-info">
+                    <div class="info-item">
+                        <strong>Nodes:</strong> <span id="nodeCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Connections:</strong> <span id="edgeCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Communities:</strong> <span id="communityCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Mode:</strong> <span id="currentMode">Full Network</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="network-container">
+                <div id="loadingMessage" class="loading">Loading network data...</div>
+                <div id="errorMessage" class="error" style="display: none;"></div>
+                <svg id="networkSvg" width="100%" height="100%"></svg>
+                
+                <div class="legend">
+                    <h6 style="margin: 0 0 10px 0;">Legend</h6>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff6b6b;"></div>
+                        <span>Target Player</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4ecdc4;"></div>
+                        <span>Direct Connection</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #45b7d1;"></div>
+                        <span>Community Member</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #96ceb4;"></div>
+                        <span>Other Players</span>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 11px; color: #666;">
+                        <div><strong>Tips:</strong></div>
+                        <div>• Drag nodes to move them</div>
+                        <div>• Scroll to zoom</div>
+                        <div>• Hover for player info</div>
+                    </div>
+                </div>
+                
+                <div id="nodeTooltip" class="node-tooltip"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+class NetworkVisualization {
+    constructor() {
+        this.svg = d3.select("#networkSvg");
+        this.container = this.svg.append("g");
+        this.simulation = null;
+        this.currentData = null;
+        this.currentMode = 'full';
+        
+        this.setupZoom();
+        this.setupEventListeners();
+        this.loadFullNetwork();
+    }
+    
+    setupZoom() {
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event) => {
+                this.container.attr("transform", event.transform);
+            });
+        
+        this.svg.call(zoom);
+    }
+    
+    setupEventListeners() {
+        document.getElementById('playerSearch').addEventListener('input', this.handleSearchInput.bind(this));
+        document.getElementById('focusPlayerBtn').addEventListener('click', this.focusOnPlayer.bind(this));
+        document.getElementById('showFullNetworkBtn').addEventListener('click', this.loadFullNetwork.bind(this));
+        document.getElementById('resetViewBtn').addEventListener('click', this.resetView.bind(this));
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                document.getElementById('suggestions').style.display = 'none';
+            }
+        });
+    }
+    
+    async handleSearchInput(event) {
+        const query = event.target.value.trim();
+        const suggestions = document.getElementById('suggestions');
+        
+        if (query.length < 2) {
+            suggestions.style.display = 'none';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/network-search/${encodeURIComponent(query)}`);
+            const players = await response.json();
+            
+            if (players.error) {
+                console.error('Search error:', players.error);
+                return;
+            }
+            
+            this.showSuggestions(players);
+        } catch (error) {
+            console.error('Error searching players:', error);
+        }
+    }
+    
+    showSuggestions(players) {
+        const suggestions = document.getElementById('suggestions');
+        
+        if (players.length === 0) {
+            suggestions.style.display = 'none';
+            return;
+        }
+        
+        suggestions.innerHTML = players.map(player => 
+            `<div class="suggestion-item" data-player="${player.name}">
+                ${player.name} ${player.country !== 'Unknown' ? `(${player.country})` : ''}
+             </div>`
+        ).join('');
+        
+        suggestions.style.display = 'block';
+        
+        // Add click handlers
+        suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('playerSearch').value = item.dataset.player;
+                suggestions.style.display = 'none';
+            });
+        });
+    }
+    
+    async focusOnPlayer() {
+        const playerName = document.getElementById('playerSearch').value.trim();
+        if (!playerName) {
+            alert('Please enter a player name');
+            return;
+        }
+        
+        this.showLoading('Loading player network...');
+        
+        try {
+            const response = await fetch(`/api/player-network/${encodeURIComponent(playerName)}`);
+            const networkData = await response.json();
+            
+            if (networkData.error) {
+                this.showError(networkData.error);
+                return;
+            }
+            
+            if (networkData.message) {
+                this.showError(networkData.message);
+                return;
+            }
+            
+            this.currentMode = 'player';
+            this.renderNetwork(networkData);
+            this.updateStats(networkData.stats);
+            document.getElementById('currentMode').textContent = `Player: ${playerName}`;
+            
+        } catch (error) {
+            console.error('Error loading player network:', error);
+            this.showError('Failed to load player network');
+        }
+    }
+    
+    async loadFullNetwork() {
+        this.showLoading('Loading full network...');
+        
+        try {
+            const response = await fetch('/api/network-data');
+            const networkData = await response.json();
+            
+            if (networkData.error) {
+                this.showError(networkData.error);
+                return;
+            }
+            
+            this.currentMode = 'full';
+            this.renderNetwork(networkData);
+            this.updateStats(networkData.stats);
+            document.getElementById('currentMode').textContent = 'Full Network';
+            
+        } catch (error) {
+            console.error('Error loading network:', error);
+            this.showError('Failed to load network data');
+        }
+    }
+    
+    showLoading(message) {
+        document.getElementById('loadingMessage').textContent = message;
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+    
+    showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('loadingMessage').style.display = 'none';
+    }
+    
+    hideMessages() {
+        document.getElementById('loadingMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+    
+    renderNetwork(data) {
+        this.currentData = data;
+        this.hideMessages();
+        
+        // Clear previous visualization
+        this.container.selectAll("*").remove();
+        
+        if (this.simulation) {
+            this.simulation.stop();
+        }
+        
+        const { nodes, edges } = data;
+        
+        if (nodes.length === 0) {
+            this.showError('No network data to display');
+            return;
+        }
+        
+        // Create links
+        const link = this.container.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(edges)
+            .enter().append("line")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", d => Math.max(1, d.weight / 10));
+        
+        // Create nodes
+        const node = this.container.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(nodes)
+            .enter().append("circle")
+            .attr("r", d => {
+                if (d.is_target) return 8;
+                if (d.group === 1) return 6;
+                return 4;
+            })
+            .attr("fill", d => this.getNodeColor(d))
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 1.5)
+            .call(this.drag());
+        
+        // Add labels for important nodes
+        const label = this.container.append("g")
+            .attr("class", "labels")
+            .selectAll("text")
+            .data(nodes.filter(d => d.is_target || d.group === 1))
+            .enter().append("text")
+            .text(d => d.name)
+            .attr("font-size", "10px")
+            .attr("font-family", "sans-serif")
+            .attr("fill", "#333")
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.35em");
+        
+        // Setup simulation
+        this.simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(edges).id(d => d.id).distance(50))
+            .force("charge", d3.forceManyBody().strength(-100))
+            .force("center", d3.forceCenter(0, 0))
+            .force("collision", d3.forceCollide().radius(15));
+        
+        // Update positions on tick
+        this.simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            
+            node
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+            
+            label
+                .attr("x", d => d.x)
+                .attr("y", d => d.y - 12);
+        });
+        
+        // Add tooltips
+        node.on("mouseover", (event, d) => {
+            const tooltip = document.getElementById('nodeTooltip');
+            tooltip.innerHTML = `
+                <strong>${d.name}</strong><br>
+                Country: ${d.country}<br>
+                ${d.community_size ? `Community Size: ${d.community_size}` : ''}
+            `;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY - 10) + 'px';
+        })
+        .on("mouseout", () => {
+            document.getElementById('nodeTooltip').style.display = 'none';
+        });
+        
+        // Center the view
+        this.centerView();
+    }
+    
+    getNodeColor(node) {
+        if (node.is_target) return '#ff6b6b';
+        if (node.group === 1) return '#4ecdc4';
+        if (node.group <= 3) return '#45b7d1';
+        return '#96ceb4';
+    }
+    
+    drag() {
+        return d3.drag()
+            .on("start", (event, d) => {
+                if (!event.active) this.simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            })
+            .on("drag", (event, d) => {
+                d.fx = event.x;
+                d.fy = event.y;
+            })
+            .on("end", (event, d) => {
+                if (!event.active) this.simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            });
+    }
+    
+    centerView() {
+        const svgElement = document.getElementById('networkSvg');
+        const width = svgElement.clientWidth;
+        const height = svgElement.clientHeight;
+        
+        this.svg.transition()
+            .duration(750)
+            .call(d3.zoom().transform, d3.zoomIdentity.translate(width / 2, height / 2));
+    }
+    
+    resetView() {
+        this.centerView();
+    }
+    
+    updateStats(stats) {
+        document.getElementById('nodeCount').textContent = stats.total_nodes || 0;
+        document.getElementById('edgeCount').textContent = stats.total_edges || 0;
+        document.getElementById('communityCount').textContent = stats.communities || stats.player_communities || 0;
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new NetworkVisualization();
+});
+</script>
+{% endblock %}
