@@ -693,7 +693,6 @@
         
         <div class="team-type-selector">
             <button class="team-type-btn active" data-type="party_teams">Party Teams</button>
-            <button class="team-type-btn" data-type="network_teams">Communities</button>
         </div>
     </div>
 
@@ -703,9 +702,6 @@
 
         <div class="team-type-info active" data-info="party_teams">
             <strong>Party Teams:</strong> Players who consistently play together using the game's party system. These are the most stable team formations.
-        </div>
-        <div class="team-type-info" data-info="network_teams">
-            <strong>Communities:</strong> Raw network communities discovered through graph analysis, showing all player clusters regardless of size. These represent the natural social groupings in the game.
         </div>
     </div>
 
@@ -788,13 +784,8 @@ function updateSearchUI() {
     const searchInput = document.getElementById('playerSearchInput');
     const searchTitle = document.querySelector('.search-section h3');
     
-    if (currentTeamType === 'network_teams') {
-        searchInput.placeholder = 'Enter player name to find their communities...';
-        searchTitle.textContent = 'Search for Player Communities';
-    } else {
-        searchInput.placeholder = 'Enter player name to find their teams...';
-        searchTitle.textContent = 'Search for Player Teams';
-    }
+    searchInput.placeholder = 'Enter player name to find their teams...';
+    searchTitle.textContent = 'Search for Player Teams';
     
     // Clear search results when switching tabs
     const searchResultsSection = document.getElementById('searchResultsSection');
@@ -832,17 +823,15 @@ async function searchPlayerTeams() {
         }
         
         if (data.teams.length === 0) {
-            const itemType = currentType === 'network_teams' ? 'communities' : 'teams';
-            resultsContainer.innerHTML = `<div class="no-results">No ${itemType} found for "${searchTerm}"</div>`;
+            resultsContainer.innerHTML = `<div class="no-results">No teams found for "${searchTerm}"</div>`;
             return;
         }
         
         // Display search results
-        const itemType = currentType === 'network_teams' ? 'communities' : 'teams';
         const itemCount = data.items_found || data.teams_found || data.teams.length;
         resultsContainer.innerHTML = `
             <div class="search-summary">
-                Found ${itemCount} ${itemType} for "${data.player_name}"
+                Found ${itemCount} teams for "${data.player_name}"
             </div>
             <div class="teams-grid">
                 ${data.teams.map((team, index) => createSearchResultCard(team, index + 1)).join('')}
@@ -1144,33 +1133,6 @@ function createTeamCard(team, rank) {
             playersHtml = team.players ? team.players.map(playerId => 
                 `<span class="player-tag">Player ${playerId}</span>`
             ).join('') : '';
-        }
-        
-    } else if (currentTeamType === 'network_teams') {
-        teamName = team.community_name || `Community ${rank}`;
-        playerCount = team.player_count || (team.roster ? team.roster.length : 0);
-        
-        statsHtml = `
-            <div class="stat-item">
-                <span class="stat-value">${playerCount}</span>
-                <span class="stat-label">Players</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-value">Community</span>
-                <span class="stat-label">Type</span>
-            </div>
-        `;
-        
-        // Use roster for communities
-        const playerList = team.roster || [];
-        if (playerList.length > 0) {
-            playersHtml = playerList.map(player => {
-                const countryFlag = getCountryFlag(player.country);
-                const displayCountry = player.country !== 'Unknown' ? player.country : '';
-                return `<span class="player-tag" title="${player.name} (${player.country})">${countryFlag} ${player.name}</span>`;
-            }).join('');
-        } else {
-            playersHtml = '';
         }
         
     }
