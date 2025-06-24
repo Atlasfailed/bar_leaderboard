@@ -90,7 +90,17 @@ class NationRankings {
             return;
         }
 
-        rankings.forEach(nation => {
+        // Filter out nations with invalid country codes (keep only official 2-letter codes and some special ones)
+        const validRankings = rankings.filter(nation => {
+            const code = nation.countryCode;
+            if (!code || code === 'null' || code === '??') {
+                return false;
+            }
+            // Allow 2-letter ISO codes and some special BAR faction codes
+            return code.length === 2 || ['ARM', 'LEGION', 'SCAV', 'RAPTOR-RED', 'BARB', 'MOON', 'NEB', 'EN-PIR', 'GB-WLS', 'ISO238'].includes(code);
+        });
+
+        validRankings.forEach(nation => {
             // Create the nation row
             const row = document.createElement('tr');
             row.className = 'nation-row';
@@ -104,12 +114,14 @@ class NationRankings {
             row.innerHTML = `
                 <td class="rank">${nation.rank}</td>
                 <td>
-                    ${nation.country_name || nation.countryCode}
-                    <button class="view-details-btn" onclick="window.nationRankings.showScoreBreakdown('${nation.countryCode}', '${currentGameMode}')">
+                    <span class="country-flag">${this.getCountryFlag(nation.countryCode)}</span>${nation.country_name || nation.countryCode}
+                </td>
+                <td class="${scoreClass}">${scoreSign}${Math.round(nation.total_score)}</td>
+                <td class="actions">
+                    <button class="view-details-btn" onclick="window.nationRankings.showScoreBreakdown('${encodeURIComponent(nation.countryCode)}', '${encodeURIComponent(currentGameMode)}')">
                         View Details
                     </button>
                 </td>
-                <td class="${scoreClass}">${scoreSign}${Math.round(nation.total_score)}</td>
             `;
             this.rankingBody.appendChild(row);
 
@@ -135,7 +147,7 @@ class NationRankings {
                     </table>`;
 
                 const cell = document.createElement('td');
-                cell.colSpan = 3;
+                cell.colSpan = 4;
                 cell.className = 'contributors-cell';
                 cell.innerHTML = contributorsHTML;
                 contributorsRow.appendChild(cell);
@@ -146,7 +158,11 @@ class NationRankings {
 
     async showScoreBreakdown(countryCode, gameMode) {
         try {
-            const response = await fetch(`${this.API_URL}/api/nation-score-breakdown/${countryCode}/${encodeURIComponent(gameMode)}`);
+            // Decode the parameters in case they were double-encoded
+            const decodedCountryCode = decodeURIComponent(countryCode);
+            const decodedGameMode = decodeURIComponent(gameMode);
+            
+            const response = await fetch(`${this.API_URL}/api/nation-score-breakdown/${encodeURIComponent(decodedCountryCode)}/${encodeURIComponent(decodedGameMode)}`);
             const data = await response.json();
             
             if (!response.ok) {
@@ -373,6 +389,50 @@ class NationRankings {
         `;
 
         this.searchResultsContainer.innerHTML = resultsHTML;
+    }
+
+    getCountryFlag(countryCode) {
+        // Map country codes to flag emoticons
+        const flagMap = {
+            'US': '🇺🇸', 'DE': '🇩🇪', 'GB': '🇬🇧', 'AU': '🇦🇺', 'CA': '🇨🇦',
+            'FR': '🇫🇷', 'PL': '🇵🇱', 'NL': '🇳🇱', 'RU': '🇷🇺', 'BR': '🇧🇷',
+            'AD': '🇦🇩', 'AE': '🇦🇪', 'AL': '🇦🇱', 'AM': '🇦🇲', 'AO': '🇦🇴',
+            'AQ': '🇦🇶', 'AR': '🇦🇷', 'AT': '🇦🇹', 'AW': '🇦🇼', 'AX': '🇦🇽',
+            'AZ': '🇦🇿', 'BA': '🇧🇦', 'BB': '🇧🇧', 'BD': '🇧🇩', 'BE': '🇧🇪',
+            'BG': '🇧🇬', 'BH': '🇧🇭', 'BM': '🇧🇲', 'BN': '🇧🇳', 'BO': '🇧🇴',
+            'BY': '🇧🇾', 'BZ': '🇧🇿', 'CH': '🇨🇭', 'CI': '🇨🇮', 'CL': '🇨🇱',
+            'CN': '🇨🇳', 'CO': '🇨🇴', 'CR': '🇨🇷', 'CY': '🇨🇾', 'CZ': '🇨🇿',
+            'DK': '🇩🇰', 'DO': '🇩🇴', 'DZ': '🇩🇿', 'EE': '🇪🇪', 'EG': '🇪🇬',
+            'ES': '🇪🇸', 'FI': '🇫🇮', 'FJ': '🇫🇯', 'FO': '🇫🇴', 'GD': '🇬🇩',
+            'GE': '🇬🇪', 'GF': '🇬🇫', 'GG': '🇬🇬', 'GH': '🇬🇭', 'GI': '🇬🇮',
+            'GL': '🇬🇱', 'GP': '🇬🇵', 'GR': '🇬🇷', 'GT': '🇬🇹', 'GU': '🇬🇺',
+            'GY': '🇬🇾', 'HK': '🇭🇰', 'HN': '🇭🇳', 'HR': '🇭🇷', 'HU': '🇭🇺',
+            'ID': '🇮🇩', 'IE': '🇮🇪', 'IL': '🇮🇱', 'IM': '🇮🇲', 'IN': '🇮🇳',
+            'IQ': '🇮🇶', 'IR': '🇮🇷', 'IS': '🇮🇸', 'IT': '🇮🇹', 'JE': '🇯🇪',
+            'JM': '🇯🇲', 'JO': '🇯🇴', 'JP': '🇯🇵', 'KE': '🇰🇪', 'KG': '🇰🇬',
+            'KH': '🇰🇭', 'KI': '🇰🇮', 'KR': '🇰🇷', 'KW': '🇰🇼', 'KY': '🇰🇾',
+            'KZ': '🇰🇿', 'LA': '🇱🇦', 'LB': '🇱🇧', 'LI': '🇱🇮', 'LK': '🇱🇰',
+            'LT': '🇱🇹', 'LU': '🇱🇺', 'LV': '🇱🇻', 'MA': '🇲🇦', 'MC': '🇲🇨',
+            'MD': '🇲🇩', 'ME': '🇲🇪', 'MG': '🇲🇬', 'MK': '🇲🇰', 'MM': '🇲🇲',
+            'MN': '🇲🇳', 'MP': '🇲🇵', 'MT': '🇲🇹', 'MU': '🇲🇺', 'MV': '🇲🇻',
+            'MX': '🇲🇽', 'MY': '🇲🇾', 'MZ': '🇲🇿', 'NC': '🇳🇨', 'NG': '🇳🇬',
+            'NO': '🇳🇴', 'NP': '🇳🇵', 'NZ': '🇳🇿', 'OM': '🇴🇲', 'PA': '🇵🇦',
+            'PE': '🇵🇪', 'PF': '🇵🇫', 'PH': '🇵🇭', 'PK': '🇵🇰', 'PR': '🇵🇷',
+            'PS': '🇵🇸', 'PT': '🇵🇹', 'PW': '🇵🇼', 'PY': '🇵🇾', 'QA': '🇶🇦',
+            'RE': '🇷🇪', 'RO': '🇷🇴', 'RS': '🇷🇸', 'SA': '🇸🇦', 'SE': '🇸🇪',
+            'SG': '🇸🇬', 'SI': '🇸🇮', 'SK': '🇸🇰', 'SL': '🇸🇱', 'SN': '🇸🇳',
+            'SR': '🇸🇷', 'SV': '🇸🇻', 'SY': '🇸🇾', 'SZ': '🇸🇿', 'TG': '🇹🇬',
+            'TH': '🇹🇭', 'TN': '🇹🇳', 'TR': '🇹🇷', 'TT': '🇹🇹', 'TW': '🇹🇼',
+            'UA': '🇺🇦', 'UG': '🇺🇬', 'UY': '🇺🇾', 'UZ': '🇺🇿', 'VA': '🇻🇦',
+            'VE': '🇻🇪', 'VI': '🇻🇮', 'VN': '🇻🇳', 'VU': '🇻🇺', 'ZA': '🇿🇦',
+            'ZM': '🇿🇲', 'ZW': '🇿🇼', 'EU': '🇪🇺',
+            // Special BAR faction codes
+            'ARM': '⚙️', 'LEGION': '🤖', 'SCAV': '🦂', 'RAPTOR-RED': '🦅', 
+            'BARB': '⚔️', 'MOON': '🌙', 'NEB': '🌌', 'EN-PIR': '🏴‍☠️',
+            'GB-WLS': '🏴', 'ISO238': '🌍', '??': '❓'
+        };
+        
+        return flagMap[countryCode] || '🏁';
     }
 }
 

@@ -59,6 +59,14 @@ body {
     margin: 0;
     padding: 0;
     gap: 2rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.nav-menu::-webkit-scrollbar {
+    display: none;
 }
 
 .nav-link {
@@ -68,11 +76,20 @@ body {
     border-radius: 6px;
     transition: all 0.2s ease-in-out;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 10;
 }
 
+/* Fix for overlapping hover elements */
 .nav-link:hover {
     color: var(--text-primary);
     background-color: var(--hover-bg);
+    transform: none;
+    box-shadow: none;
+    z-index: 15;
 }
 
 .nav-link.active {
@@ -170,6 +187,19 @@ select, input[type="search"] {
     color: var(--text-primary);
     font-size: 1rem;
     min-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 5;
+}
+
+/* Ensure dropdown options don't wrap */
+select option {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.5rem;
 }
 
 /* Game Mode Selector */
@@ -1096,23 +1126,52 @@ td.rank {
     white-space: nowrap;
 }
 
-/* Responsive adjustments */
+/* Nation Rankings - View Details Button */
+.actions {
+    text-align: center;
+}
+
+.view-details-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+}
+
+.view-details-btn:hover {
+    background-color: #4f94e8;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(88, 166, 255, 0.3);
+}
+
+.view-details-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(88, 166, 255, 0.3);
+}
+
+/* Nation table row styling for flags */
+.nation-row td:nth-child(2) {
+    font-weight: 500;
+}
+
+.nation-row td:nth-child(2) .country-flag {
+    margin-right: 0.5rem;
+}
+
+/* Responsive view details button */
 @media (max-width: 768px) {
-    .strategy-grid {
-        grid-template-columns: 1fr;
+    .view-details-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
     }
     
-    .legend-items {
-        justify-content: center;
-    }
-    
-    .formula-item {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    
-    .formula-item strong {
-        min-width: auto;
-        margin-right: 0;
+    .actions {
+        width: 100px;
     }
 }

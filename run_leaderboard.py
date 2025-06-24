@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WSGI entry point for production deployment."""
+"""Entry point for the leaderboard calculation pipeline."""
 
 import sys
 from pathlib import Path
@@ -9,7 +9,7 @@ project_root = Path(__file__).parent
 src_path = project_root / "src"
 sys.path.insert(0, str(src_path))
 
-from src.web.wsgi import application
+from src.pipelines.run_pipelinev2 import main
 
 if __name__ == "__main__":
-    application.run()
+    main()

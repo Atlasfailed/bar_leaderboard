@@ -1,0 +1,93 @@
+# BAR Leaderboard Configuration
+# =============================
+# Environment-specific settings for the BAR Leaderboard system
+
+# Development environment (default)
+development:
+  # Data processing parameters
+  cache_duration_hours: 24
+  max_workers: 4
+  chunk_size: 10000
+  
+  # Analysis parameters
+  min_games_threshold: 50
+  k_factor_base: 400.0
+  
+  # Team analysis parameters
+  min_matches_for_connection: 5
+  min_team_matches: 10
+  min_roster_size: 2
+  max_roster_size: 10
+  
+  # Performance and debugging
+  enable_monitoring: true
+  enable_validation: true
+  log_level: "INFO"
+  
+  # Network settings
+  ssl_verify: false
+  request_timeout: 30
+  
+  # Output settings
+  save_performance_reports: true
+  save_validation_reports: true
+
+# Production environment
+production:
+  # Use faster cache refresh in production
+  cache_duration_hours: 6
+  max_workers: 8
+  chunk_size: 50000
+  
+  # Higher quality thresholds for production
+  min_games_threshold: 100
+  k_factor_base: 400.0
+  
+  # Team analysis (same as dev)
+  min_matches_for_connection: 5
+  min_team_matches: 15
+  min_roster_size: 3
+  max_roster_size: 8
+  
+  # Production monitoring
+  enable_monitoring: true
+  enable_validation: true
+  log_level: "INFO"
+  
+  # Secure network settings
+  ssl_verify: true
+  request_timeout: 60
+  
+  # Save reports for production analysis
+  save_performance_reports: true
+  save_validation_reports: true
+
+# Testing environment
+testing:
+  # Fast processing for tests
+  cache_duration_hours: 1
+  max_workers: 2
+  chunk_size: 1000
+  
+  # Low thresholds for testing
+  min_games_threshold: 5
+  k_factor_base: 100.0
+  
+  # Minimal team analysis for tests
+  min_matches_for_connection: 2
+  min_team_matches: 3
+  min_roster_size: 2
+  max_roster_size: 5
+  
+  # Disable intensive operations in tests
+  enable_monitoring: false
+  enable_validation: false
+  log_level: "DEBUG"
+  
+  # Testing network settings
+  ssl_verify: false
+  request_timeout: 10
+  
+  # Don't save reports in testing
+  save_performance_reports: false
+  save_validation_reports: false

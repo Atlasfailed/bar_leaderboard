@@ -3,8 +3,8 @@
 {% block title %}BAR Nation Rankings (Last 7 Days){% endblock %}
 
 {% block content %}
-        <h1>BAR Nation Rankings</h1>
-        <div class="header-status">Who reigns supreme in Beyond All Reason? Our new Nation Rankings reveal the global power balance, updated weekly based on the performance of each country's elite players. See where your nation ranks in the global BAR championship and, more importantly, how your performance is shaping its destiny. Fight for your flag!</div>
+        <h1>BAR Nation Rankings (Last 7 Days)</h1>
+        <div class="header-status">Who reigns supreme in Beyond All Reason? Our weekly Nation Rankings reveal the global power balance, updated based on the performance of each country's elite players over the last 7 days. See where your nation ranks in the weekly global BAR championship and, more importantly, how your recent performance is shaping its destiny. Fight for your flag!</div>
         <div class="last-updated" id="lastUpdated">Last updated: Loading...</div>
 
         <div class="controls">
@@ -33,7 +33,8 @@
                 <tr>
                     <th style="width:10%; text-align: center;">Rank</th>
                     <th style="width:50%;">Nation</th>
-                    <th style="width:40%;">Weekly Score</th>
+                    <th style="width:25%;">Weekly Score</th>
+                    <th style="width:15%; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="rankingBody"></tbody>
